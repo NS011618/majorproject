@@ -25,6 +25,7 @@
     "react-type-animation": "^3.1.0",
     "recharts": "^2.8.0",
     "styled-components": "^6.0.7",
+    "use-persisted-state": "^0.3.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

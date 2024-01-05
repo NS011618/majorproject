@@ -1,12 +1,14 @@
 // App.js
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Link, Route, Routes, Outlet, Navigate } from 'react-router-dom';
 import { Home, About, Contact, Login, Register, Patientdashboard, Inputdat, Admindashboard } from './pages';
+import createPersistedState from 'use-persisted-state';
 
+const useLoggedInState = createPersistedState('isLoggedIn');
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useLoggedInState(false);
   
   useEffect(() => {
     // Check the login status when the component mounts

@@ -77,10 +77,10 @@ const Inputdat = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(csvData),
+        body: JSON.stringify([userRole,csvData]),
         credentials: 'include',
       });
-      console.log(response);
+      
       if (response.ok) {
         setPostDataResponse('Data posted successfully');
 

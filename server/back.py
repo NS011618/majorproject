@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify,make_response
 from flask_pymongo import PyMongo
 import bcrypt
-from flask_cors import CORS
+from flask_cors import CORS,cross_origin
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -76,13 +76,7 @@ def login():
     except Exception as e:
         return jsonify({'status': False, 'msg': str(e)}), 500
 
-@app.route('/logout', methods=['POST'])
-def logout():
-    try:
-        # Clear the user's session or token (Flask-Login is not implemented)
-        return jsonify({'status': True, 'msg': 'Logout successful'}), 200
-    except Exception as e:
-        return jsonify({'status': False, 'msg': str(e)}), 500
+
 
 # Check and create 'arole' collection
 admin_data_name = 'aroledetail'
@@ -94,20 +88,21 @@ patient_data = mongo.db[patient_data_name]
 
 
 @app.route('/fetchinput', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def receive_and_save_data():
     try:
         data = request.get_json()  # Get the JSON data from the request
-        print(data)
+        
         if not data:
             return jsonify({'message': 'No data received'}), 400
 
         # Assuming role is the same for all records in the request
-        role = data.get('userRole')
-        print(role)
+        role = data[0]
+      
         collection = admin_data if role == "admin" else patient_data
 
         # Ensure that "Sno" is unique and serves as the primary key
-        for record in data:
+        for record in data[1]:
             if "Sno" not in record:
                 return jsonify({'message': 'Each record must have a "Sno" field'}), 400
 
@@ -118,7 +113,7 @@ def receive_and_save_data():
 
         # Insert the received data into the MongoDB collection
         result = collection.insert_many(data[1])
-        print(result.inserted_ids)
+        
 
         return jsonify({'message': 'Data received and saved successfully'}), 200
     except Exception as e:
