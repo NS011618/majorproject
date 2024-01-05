@@ -5,6 +5,8 @@
 - Login of patient,admin 
 - Signup of patient, admin
 - Logout 
+- Handling input files and redirecting to (admin dashboard or patient dashboard) based on roles
+- Storing patient,admin credentials and csv data in mongodb database
 ## Team members:
 - Sathvik Bandru
 - Ashish Golla
