@@ -6,6 +6,7 @@ import { registerRoute } from '../utils/APIRoutes';
 
 function Register() {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('patient');
@@ -23,6 +24,7 @@ function Register() {
 
       const response = await axios.post(registerRoute, {
         username,
+        email,
         password,
         confirmPassword,
         role,
@@ -50,6 +52,15 @@ function Register() {
             placeholder="Username"
             name="username"
             onChange={(e) => setUsername(e.target.value)}
+          />
+        </InputGroup>
+        <InputGroup>
+          <label>Email:</label>
+          <Input
+            type="email"
+            placeholder="Email"
+            name="email"
+            onChange={(e) => setEmail(e.target.value)}
           />
         </InputGroup>
         <InputGroup>

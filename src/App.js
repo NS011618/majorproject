@@ -10,6 +10,7 @@ const useLoggedInState = createPersistedState('isLoggedIn');
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useLoggedInState(false);
   const [role, setRole] = useState('patient');
+  const [username, setUsername] = useState(null);
   
   useEffect(() => {
     // Check the login status when the component mounts
@@ -29,15 +30,23 @@ function App() {
 
   const handleLogout = () => {
     // Handle logout and update isLoggedIn state
-    localStorage.setItem('isLoggedIn', 'false');   
+    localStorage.setItem('isLoggedIn', 'false');  
+    localStorage.setItem('role', 'patient'); 
+    localStorage.setItem('username', null); 
     setIsLoggedIn(false);
   };
 
   useEffect(() => {
     const storedRole = localStorage.getItem('userRole');
- 
-    if (storedRole) {
+    const storedName = localStorage.getItem('userName');
+    
+    if (storedRole && storedName) {
       setRole(storedRole);
+      setUsername(storedName);
+      console.log(
+        `User role: ${storedRole}, User name: ${storedName}`
+      );
+      
     }
   }, []);
 

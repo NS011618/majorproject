@@ -24,24 +24,25 @@ def signup():
     try:
         data = request.get_json()
         username = data.get('username')
+        email = data.get('email')
         password = data.get('password')
         confirmPassword = data.get('confirmPassword')
         role = data.get('role')
 
-        if not username or not password or not confirmPassword or not role:
+        if not username or not email or not password or not confirmPassword or not role:
             return jsonify({'status': False, 'msg': 'Incomplete data provided'}), 400
 
         collection = admin_collection if role == "admin" else patient_collection
 
-        if collection.find_one({'username': username}):
-            return jsonify({'status': False, 'msg': 'Username already exists'}), 400
+        if collection.find_one({'email': email}):
+            return jsonify({'status': False, 'msg': 'Email already exists'}), 400
 
         if password != confirmPassword:
             return jsonify({'status': False, 'msg': 'Password and confirm password do not match'}), 400
 
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-        user_id = collection.insert_one({'username': username, 'password': hashed_password, 'role': role}).inserted_id
+        user_id = collection.insert_one({'username': username,'email': email, 'password': hashed_password, 'role': role}).inserted_id
 
         return jsonify({'status': True, 'msg': 'Registered successfully', 'user_id': str(user_id)}), 201
 
@@ -49,29 +50,28 @@ def signup():
         return jsonify({'status': False, 'msg': str(e)}), 500
 
 @app.route('/login', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def login():
     try:
         data = request.get_json()
         username = data.get('username')
+        email = data.get('email')
         password = data.get('password')
         role = data.get('role')
 
-        if not username or not password or not role:
+        if not username or not email or not password or not role:
             return jsonify({'status': False, 'msg': 'Incomplete data provided'}), 400
 
         collection = admin_collection if role == "admin" else patient_collection
 
-        user = collection.find_one({'username': username, 'role': role})
+        user = collection.find_one({'email': email, 'role': role})
 
         if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
-            # Set a cookie with the user's role
-            response = make_response(jsonify({'status': True, 'msg': 'Login successful'}), 200)
-            response.headers.add('Access-Control-Allow-Credentials', 'true')
-            response.headers.add('Access-Control-Expose-Headers', 'Set-Cookie')
-            response.set_cookie('userRole', role)
-            return response
+           
+            return jsonify({'status': True, 'msg': 'Login successful'}), 200
+            
         else:
-            return jsonify({'status': False, 'msg': 'Invalid username or password'}), 401
+            return jsonify({'status': False, 'msg': 'Invalid email or password'}), 401
 
     except Exception as e:
         return jsonify({'status': False, 'msg': str(e)}), 500

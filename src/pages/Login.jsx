@@ -6,6 +6,7 @@ import { loginRoute } from '../utils/APIRoutes';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('patient');
   const [message, setMessage] = useState('');
@@ -33,6 +34,7 @@ const Login = ({ onLogin }) => {
       setLoading(true);
       const response = await axios.post(loginRoute, {
         username,
+        email,
         password,
         role,
       });
@@ -73,6 +75,17 @@ const Login = ({ onLogin }) => {
             onChange={(e) => setUsername(e.target.value)}
           />
         </InputGroup>
+        <InputGroup>
+          <label>Email:</label>
+          <Input
+            type="email"
+            placeholder="Email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </InputGroup>
+          
         <InputGroup>
           <label>Password:</label>
           <Input
