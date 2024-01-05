@@ -62,6 +62,7 @@ function App() {
                 <>
                   <Link to="/patient-dashboard" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Dashboard</Link>
                   
+                  <Link to="/input-data" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Input Data</Link>
                 </>
               ) : (
                 <>
