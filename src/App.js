@@ -52,35 +52,35 @@ function App() {
 
   return (
     <BrowserRouter>
-      <header className="w-full flex items-center bg-white sm:px-8 px-4 py-4 border-b border-b-[#e6ebf4]">
-        <h3 to="" className="w-full text-xl font-semibold object-contain font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Medical History</h3>
+      <header className="w-full flex items-center bg-white sm:px-8 px-4 py-4 border-b border-b-[#e6ebf4] bg-slate-300">
+        <h3 to="" className="w-full text-xl font-semibold object-contain font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Medical History</h3>
         <section className="w-full flex justify-end gap-5">
           {isLoggedIn ? (
             <>
             {
               role === 'patient' ? (
                 <>
-                  <Link to="/patient-dashboard" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Dashboard</Link>
+                  <Link to="/patient-dashboard" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Dashboard</Link>
                   
-                  <Link to="/input-data" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Input Data</Link>
+                  <Link to="/input-data" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Input Data</Link>
                 </>
               ) : (
                 <>
-                  <Link to="/admin-dashboard" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Dashboard</Link>
+                  <Link to="/admin-dashboard" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Dashboard</Link>
                 </>
               )
             }
               
-              <Link to="/about-page" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">About</Link>
-              <Link to="/contact-page" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Contact us</Link>              
-              <button onClick={handleLogout} className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Logout</button>
+              <Link to="/about-page" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">About</Link>
+              <Link to="/contact-page" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Contact us</Link>              
+              <button onClick={handleLogout} className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Logout</button>
             </>
           ) : (
             <>
-              <Link to="/about-page" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">About</Link>
-              <Link to="/contact-page" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Contact us</Link>
-              <Link to="/login-page" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Login</Link>
-              <Link to="/" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Sign Up</Link>
+              <Link to="/about-page" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">About</Link>
+              <Link to="/contact-page" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Contact us</Link>
+              <Link to="/login-page" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Login</Link>
+              <Link to="/" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Sign Up</Link>
             </>
           )}
         </section>
