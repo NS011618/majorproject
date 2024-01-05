@@ -15,8 +15,15 @@ const Login = ({ onLogin }) => {
 
   useEffect(() => {
     const storedRole = localStorage.getItem('userRole');
-    if (storedRole) {
+    const storedName = localStorage.getItem('userName');
+    
+    if (storedRole && storedName) {
       setRole(storedRole);
+      setUsername(storedName);
+      console.log(
+        `User role: ${storedRole}, User name: ${storedName}`
+      );
+      
     }
   }, []);
   
@@ -34,9 +41,15 @@ const Login = ({ onLogin }) => {
         setMessage('Login successful');
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userRole',role);      
-        
+        localStorage.setItem('userName',username); 
         onLogin(); // Notify the parent component about the successful login
-        navigate('/home');
+        if(role === 'admin'){
+          navigate('/admin-dashboard');
+        }
+        else{
+          navigate('/patient-dashboard');
+        }
+        
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'An error occurred';

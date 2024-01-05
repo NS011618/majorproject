@@ -1,48 +1,44 @@
-import React from 'react'
-import Lottie from 'lottie-react'
-import {animation3, img2} from '../assets'
-import { TypeAnimation } from 'react-type-animation';
-import { motion } from 'framer-motion';
+import { React , useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
-  return (
-    <>
-    <section>
-      <div className='rowC'>
-        <div>
-          <h1 class="pl-12 text-5xl font-extrabold text-gray-700"><span class="text-transparent bg-clip-text bg-gradient-to-r to-green-600 from-red-600">Medical</span> Summary</h1>
-          <Lottie className='pt-12' animationData={animation3}/>      
-        </div> 
+  const navigate = useNavigate();
+  const [userRole, setUserRole] = useState(null);
+  const [username, setUsername] = useState(null);
 
-        <motion.div initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1 }}
-                className="max-h-[35rem] overflow-hidden w-3/5 text-blue-600 ">
-          <img className="pl-24 pr-24" src={img2} alt='logo'/>
-          
-          <div className='max-h-50px'>
-              <TypeAnimation className='pl-12 mt-8 text-xl font-mono'
-              style={{ whiteSpace: 'pre-line', height: '195px', display: 'block' }}
-              sequence={[
-                2000,
-                `Get your medical summary now!!`, // actual line-break inside string literal also gets animated in new line, but ensure there are no leading spaces
-                2000,
-                `Medical history provides you with the best report of your health with state of the art technology!`,
-                2000,
-                '',
-              ]}
-              speed={20}
-              repeat={Infinity}
-            />
-          </div>
-            
-        </motion.div>
-         
+  useEffect(() => {
+    const storedRole = localStorage.getItem('userRole');
+    const storedName = localStorage.getItem('userName');
+    
+    if (storedRole && storedName) {
+      setUserRole(storedRole);
+      setUsername(storedName);
+      console.log(
+        `User role: ${storedRole}, User name: ${storedName}`
+      );
+      
+    }
+  }, []);
+
+  const handleInput = () => {
+    navigate('/input-data');
+  };
+
+  return (
+    <div className='flex flex-col h-screen'>
+      <h1 className='text-3xl font-bold mb-8'>Home</h1>
+      <div className=''>
+        <button
+          className='bg-blue-500 text-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:bg-blue-600'
+          onClick={handleInput}
+        >
+          Upload Files
+        </button>
+        <p>{username}</p>
+        <p>{userRole}</p>
       </div>
-    </section>
-    </>
-  )
+    </div>
+  );
 }
 
-
-export default Home
+export default Home;

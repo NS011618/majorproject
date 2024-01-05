@@ -1,14 +1,15 @@
 // App.js
 import './App.css';
-import React, { useEffect } from 'react';
+import React, { useEffect ,useState } from 'react';
 import { BrowserRouter, Link, Route, Routes, Outlet, Navigate } from 'react-router-dom';
-import { Home, About, Contact, Login, Register, Patientdashboard, Inputdat, Admindashboard } from './pages';
+import { About, Contact, Login, Register, Patientdashboard, Inputdat, Admindashboard } from './pages';
 import createPersistedState from 'use-persisted-state';
 
 const useLoggedInState = createPersistedState('isLoggedIn');
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useLoggedInState(false);
+  const [role, setRole] = useState('patient');
   
   useEffect(() => {
     // Check the login status when the component mounts
@@ -32,15 +33,34 @@ function App() {
     setIsLoggedIn(false);
   };
 
+  useEffect(() => {
+    const storedRole = localStorage.getItem('userRole');
+ 
+    if (storedRole) {
+      setRole(storedRole);
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <header className="w-full flex items-center bg-white sm:px-8 px-4 py-4 border-b border-b-[#e6ebf4]">
-        <Link to="" className="w-full text-xl font-semibold object-contain font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Medical History</Link>
+        <h3 to="" className="w-full text-xl font-semibold object-contain font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Medical History</h3>
         <section className="w-full flex justify-end gap-5">
           {isLoggedIn ? (
             <>
-              <Link to="/home" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Home</Link>
-              <Link to="/input-data" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Implementation</Link>
+            {
+              role === 'patient' ? (
+                <>
+                  <Link to="/patient-dashboard" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Dashboard</Link>
+                  
+                </>
+              ) : (
+                <>
+                  <Link to="/admin-dashboard" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Dashboard</Link>
+                </>
+              )
+            }
+              
               <Link to="/about-page" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">About</Link>
               <Link to="/contact-page" className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Contact us</Link>              
               <button onClick={handleLogout} className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 rounded-md">Logout</button>
@@ -57,10 +77,6 @@ function App() {
       </header>
       <main className="sm:p-8 px-4 py-8 w-full bg-white min-h-[calc(100vh - 73px)]">
         <Routes>
-          <Route
-            path="/home"
-            element={isLoggedIn ? <Home /> : <Navigate to="/login-page" />}
-          />
           <Route path='/about-page' element={<About />} />
           <Route path='/contact-page' element={<Contact />} />        
           <Route

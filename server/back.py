@@ -114,7 +114,6 @@ def receive_and_save_data():
         # Insert the received data into the MongoDB collection
         result = collection.insert_many(data[1])
         
-
         return jsonify({'message': 'Data received and saved successfully'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500

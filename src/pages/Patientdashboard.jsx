@@ -1,18 +1,41 @@
-import React from 'react';
+import { React , useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 const Patientdashboard = () => {
+  const navigate = useNavigate();
+  const [userRole, setUserRole] = useState(null);
+  const [username, setUsername] = useState(null);
 
-
-  
-  return (
-    <>
-      <h1>Disease Prediction</h1>
+  useEffect(() => {
+    const storedRole = localStorage.getItem('userRole');
+    const storedName = localStorage.getItem('userName');
+    
+    if (storedRole && storedName) {
+      setUserRole(storedRole);
+      setUsername(storedName);     
       
-    </>
-    
-    
+    }
+  }, []);
+
+  const handleInput = () => {
+    navigate('/input-data');
+  };
+
+  return (
+    <div className='flex flex-col h-screen'>
+      <h1 className='text-3xl font-bold mb-8'>Home</h1>
+      <div className=''>
+        <button
+          className='bg-blue-500 text-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:bg-blue-600'
+          onClick={handleInput}
+        >
+          Upload Files
+        </button>
+        <p>{username}</p>
+        <p>{userRole}</p>
+      </div>
+    </div>
   );
-};
+}
 
 export default Patientdashboard;
-
-

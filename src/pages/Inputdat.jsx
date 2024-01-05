@@ -16,7 +16,7 @@ const Inputdat = () => {
     const checkrole = () => {
       const storedRole = localStorage.getItem('userRole');
       setUserRole(storedRole);
-      console.log(storedRole);
+      
     };
 
     checkrole();
