@@ -1,10 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,make_response
 from flask_pymongo import PyMongo
 import bcrypt
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 app.config['MONGO_URI'] = 'mongodb+srv://ashishgolla2003:NS011618@cluster0.ophbpqo.mongodb.net/project'
 mongo = PyMongo(app)
@@ -16,6 +16,8 @@ admin_collection = mongo.db[admin_collection_name]
 # Check and create 'prole' collection
 patient_collection_name = 'prole'
 patient_collection = mongo.db[patient_collection_name]
+
+
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -62,7 +64,12 @@ def login():
         user = collection.find_one({'username': username, 'role': role})
 
         if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
-            return jsonify({'status': True, 'msg': 'Login successful'}), 200
+            # Set a cookie with the user's role
+            response = make_response(jsonify({'status': True, 'msg': 'Login successful'}), 200)
+            response.headers.add('Access-Control-Allow-Credentials', 'true')
+            response.headers.add('Access-Control-Expose-Headers', 'Set-Cookie')
+            response.set_cookie('userRole', role)
+            return response
         else:
             return jsonify({'status': False, 'msg': 'Invalid username or password'}), 401
 
@@ -76,6 +83,50 @@ def logout():
         return jsonify({'status': True, 'msg': 'Logout successful'}), 200
     except Exception as e:
         return jsonify({'status': False, 'msg': str(e)}), 500
+
+# Check and create 'arole' collection
+admin_data_name = 'aroledetail'
+admin_data = mongo.db[admin_data_name]
+
+# Check and create 'prole' collection
+patient_data_name = 'proledetail'
+patient_data = mongo.db[patient_data_name]
+
+
+@app.route('/fetchinput', methods=['POST'])
+def receive_and_save_data():
+    try:
+        data = request.get_json()  # Get the JSON data from the request
+        print(data)
+        if not data:
+            return jsonify({'message': 'No data received'}), 400
+
+        # Assuming role is the same for all records in the request
+        role = data.get('userRole')
+        print(role)
+        collection = admin_data if role == "admin" else patient_data
+
+        # Ensure that "Sno" is unique and serves as the primary key
+        for record in data:
+            if "Sno" not in record:
+                return jsonify({'message': 'Each record must have a "Sno" field'}), 400
+
+            # Check if a record with the same "Sno" already exists in the database
+            existing_record = collection.find_one({"Sno": record["Sno"]})
+            if existing_record:
+                return jsonify({'message': f'Duplicate record with Sno {record["Sno"]} exists'}), 400
+
+        # Insert the received data into the MongoDB collection
+        result = collection.insert_many(data[1])
+        print(result.inserted_ids)
+
+        return jsonify({'message': 'Data received and saved successfully'}), 200
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

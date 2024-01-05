@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
@@ -11,6 +11,15 @@ const Login = ({ onLogin }) => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem('userRole');
+    if (storedRole) {
+      setRole(storedRole);
+    }
+  }, []);
+  
 
   const handleLogin = async () => {
     try {
@@ -24,6 +33,8 @@ const Login = ({ onLogin }) => {
       if (response.status === 200) {
         setMessage('Login successful');
         localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userRole',role);      
+        
         onLogin(); // Notify the parent component about the successful login
         navigate('/home');
       }

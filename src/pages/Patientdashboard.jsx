@@ -1,9 +1,12 @@
 import React from 'react';
 const Patientdashboard = () => {
 
+
+  
   return (
     <>
-      <h1>hello</h1>
+      <h1>Disease Prediction</h1>
+      
     </>
     
     
@@ -11,3 +14,5 @@ const Patientdashboard = () => {
 };
 
 export default Patientdashboard;
+
+
