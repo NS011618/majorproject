@@ -1,9 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 import bcrypt
+from bson import ObjectId
 from flask_cors import CORS,cross_origin
 from flask_mail import Mail, Message
-
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
 
 
 app = Flask(__name__)
@@ -19,6 +25,7 @@ mail = Mail(app)
 
 app.config['MONGO_URI'] = 'mongodb+srv://ashishgolla2003:NS011618@cluster0.ophbpqo.mongodb.net/project'
 mongo = PyMongo(app)
+
 
 # Check and create 'arole' collection
 admin_collection_name = 'arole'
@@ -96,7 +103,7 @@ admin_data = mongo.db[admin_data_name]
 patient_data_name = 'proledetail'
 patient_data = mongo.db[patient_data_name]
 
-
+#post data to database
 @app.route('/fetchinput', methods=['POST'])
 @cross_origin(supports_credentials=True)
 def receive_and_save_data():
@@ -145,5 +152,82 @@ def contact():
         return jsonify({'error': str(e)}), 500
 
 
+def train_and_evaluate_classifier(algorithm):
+    symptoms = []
+    labels = []
+
+    for doc in admin_data.find():
+        # Assuming the 'symptoms' field is an array in the MongoDB document
+        symptoms.append(doc['symptoms'])
+        labels.append(doc['disease'])
+
+    X_train, X_test, y_train, y_test = train_test_split(symptoms, labels, test_size=0.2, random_state=42)
+
+    algorithms = {
+        'NaiveBayes': MultinomialNB(),
+        'DecisionTree': DecisionTreeClassifier(),
+        'RandomForest': RandomForestClassifier(),
+        'SVM': SVC(kernel='linear')
+    }
+
+    if algorithm not in algorithms:
+        return "Invalid algorithm"
+
+    clf = algorithms[algorithm]
+    clf.fit(X_train, y_train)
+
+    # Make predictions on the test set
+    y_pred = clf.predict(X_test)
+
+    # Calculate accuracy
+    accuracy = accuracy_score(y_test, y_pred)
+
+    return clf, accuracy
+
+def predict_disease_algorithm(s1, s2, s3, s4, s5, algorithm):
+    clf, accuracy = train_and_evaluate_classifier(algorithm)
+
+    # Make a prediction based on input symptoms
+    predicted_disease = clf.predict([[s1, s2, s3, s4, s5]])[0]
+
+    return predicted_disease, accuracy
+
+@app.route('/predictdisease', methods=['POST'])
+def predict_disease_flask():
+    try:
+        data = request.get_json()
+        s1 = data.get('symptom1', '')
+        s2 = data.get('symptom2', '')
+        s3 = data.get('symptom3', '')
+        s4 = data.get('symptom4', '')
+        s5 = data.get('symptom5', '')
+        algorithm = data.get('algorithm', 'NaiveBayes')  # Default to NaiveBayes if not specified
+
+        result, accuracy = predict_disease_algorithm(s1, s2, s3, s4, s5, algorithm)
+
+        return jsonify({'predicted_disease': result, 'accuracy': accuracy}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Assuming you have an API route like '/getsymptoms'
+
+@app.route('/getsymptoms', methods=['GET'])
+def get_symptoms():
+    try:
+        # Fetch symptoms from the database where get_symptoms is True
+        symptoms_cursor = admin_data.find({'get_symptoms': 'yes'}, {'_id': 0, 'symptoms': 1})
+
+        # Convert MongoDB cursor to a list of dictionaries
+        symptom_list = list(symptoms_cursor)
+
+        return jsonify(symptom_list), 200, {'Content-Type': 'application/json', 'Cache-Control': 'no-cache'}
+
+    except Exception as e:
+        print(f"Error fetching symptoms: {str(e)}")
+        return jsonify({'error': 'Internal Server Error'}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+
