@@ -1,18 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import './App.css';
-import React, { useEffect ,useState } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Link, Route, Routes, Outlet, Navigate } from 'react-router-dom';
 import { About, Contact, Login, Register, Patientdashboard, Inputdat, Admindashboard } from './pages';
 import useLocalStorageState from 'use-local-storage-state';
 
-
-
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useLocalStorageState(false);
-  const [role, setRole] = useState('patient');
-  const [username, setUsername] = useState(null);
-  
+  const [isLoggedIn, setIsLoggedIn] = useLocalStorageState('isLoggedIn', false);
+  const [role, setRole] = useLocalStorageState('userRole', 'patient');
+  const [username, setUsername] = useLocalStorageState('userName', null);
+
   useEffect(() => {
     // Check the login status when the component mounts
     const checkLoginStatus = () => {
@@ -54,22 +52,16 @@ function App() {
         <section className="w-full flex justify-end gap-5">
           {isLoggedIn ? (
             <>
-            {
-              role === 'patient' ? (
+              {role === 'patient' ? (
                 <>
                   <Link to="/patient-dashboard" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Dashboard</Link>
-                  
                   <Link to="/input-data" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Input Data</Link>
                 </>
               ) : (
-                <>
-                  <Link to="/admin-dashboard" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Dashboard</Link>
-                </>
-              )
-            }
-              
+                <Link to="/admin-dashboard" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Dashboard</Link>
+              )}
               <Link to="/about-page" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">About</Link>
-              <Link to="/contact-page" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Contact us</Link>              
+              <Link to="/contact-page" className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Contact us</Link>
               <button onClick={handleLogout} className="font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md">Logout</button>
             </>
           ) : (
@@ -85,12 +77,11 @@ function App() {
       <main className="sm:p-8 px-4 py-8 w-full bg-white min-h-[calc(100vh - 73px)]">
         <Routes>
           <Route path='/about-page' element={<About />} />
-          <Route path='/contact-page' element={<Contact />} />        
+          <Route path='/contact-page' element={<Contact />} />
           <Route
             path='/login-page'
             element={<Login onLogin={handleLogin} />}
           />
-          
           <Route path='/' element={<Register />} />
           <Route
             path='/patient-dashboard'
@@ -112,3 +103,5 @@ function App() {
 }
 
 export default App;
+
+
