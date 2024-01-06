@@ -20,11 +20,7 @@ const Login = ({ onLogin }) => {
     
     if (storedRole && storedName) {
       setRole(storedRole);
-      setUsername(storedName);
-      console.log(
-        `User role: ${storedRole}, User name: ${storedName}`
-      );
-      
+      setUsername(storedName);     
     }
   }, []);
   
