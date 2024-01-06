@@ -7,6 +7,7 @@
 - Logout 
 - Handling input files and redirecting to (admin dashboard or patient dashboard) based on roles
 - Storing patient,admin credentials and csv data in mongodb database
+- Implementing contact functionality (using mailhog to communicate)
 ## Team members:
 - Sathvik Bandru
 - Ashish Golla
