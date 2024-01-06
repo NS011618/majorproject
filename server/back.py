@@ -2,9 +2,20 @@ from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 import bcrypt
 from flask_cors import CORS,cross_origin
+from flask_mail import Mail, Message
+
+
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+
+# Email Configuration
+app.config['MAIL_SERVER'] = 'localhost'
+app.config['MAIL_PORT'] = 1025
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = False
+
+mail = Mail(app)
 
 app.config['MONGO_URI'] = 'mongodb+srv://ashishgolla2003:NS011618@cluster0.ophbpqo.mongodb.net/project'
 mongo = PyMongo(app)
@@ -116,6 +127,23 @@ def receive_and_save_data():
         return jsonify({'message': 'Data received and saved successfully'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
+
+
+@app.route('/contact', methods=['POST'])
+def contact():
+    try:
+        data = request.get_json()
+
+        # Send email with field names
+        msg = Message('New Contact Form Submission', sender=data['email'], recipients=['nani011618@gmail.com'])
+        msg.body = f"Name: {data['first_name']} {data['last_name']}\nEmail: {data['email']}\nMessage: {data['message']}\n\nRaw Form Data:\n{data}"
+
+        mail.send(msg)
+
+        return jsonify({'message': 'Message sent successfully'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
