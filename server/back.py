@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify,make_response
+from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 import bcrypt
 from flask_cors import CORS,cross_origin
@@ -16,7 +16,6 @@ admin_collection = mongo.db[admin_collection_name]
 # Check and create 'prole' collection
 patient_collection_name = 'prole'
 patient_collection = mongo.db[patient_collection_name]
-
 
 
 @app.route('/signup', methods=['POST'])
@@ -49,6 +48,7 @@ def signup():
     except Exception as e:
         return jsonify({'status': False, 'msg': str(e)}), 500
 
+
 @app.route('/login', methods=['POST'])
 @cross_origin(supports_credentials=True)
 def login():
@@ -77,12 +77,11 @@ def login():
         return jsonify({'status': False, 'msg': str(e)}), 500
 
 
-
-# Check and create 'arole' collection
+# Check and create 'aroledetail' collection
 admin_data_name = 'aroledetail'
 admin_data = mongo.db[admin_data_name]
 
-# Check and create 'prole' collection
+# Check and create 'proledetail' collection
 patient_data_name = 'proledetail'
 patient_data = mongo.db[patient_data_name]
 
@@ -96,7 +95,7 @@ def receive_and_save_data():
         if not data:
             return jsonify({'message': 'No data received'}), 400
 
-        # Assuming role is the same for all records in the request
+        # getting role from the data 
         role = data[0]
       
         collection = admin_data if role == "admin" else patient_data
@@ -117,10 +116,6 @@ def receive_and_save_data():
         return jsonify({'message': 'Data received and saved successfully'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
-
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
