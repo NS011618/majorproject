@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { registerRoute } from '../utils/APIRoutes';
+import React, { useState } from "react";
+import axios from "axios";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
+import { registerRoute } from "../utils/APIRoutes";
 
 function Register() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('patient');
-  const [message, setMessage] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("patient");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async () => {
@@ -18,7 +18,7 @@ function Register() {
       setLoading(true);
 
       if (password !== confirmPassword) {
-        setMessage('Password and confirm password do not match');
+        setMessage("Password and confirm password do not match");
         return;
       }
 
@@ -31,11 +31,11 @@ function Register() {
       });
 
       if (response.status === 201) {
-        setMessage('User registered successfully');
+        setMessage("User registered successfully");
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'An error occurred';
-      setMessage('Error: ' + errorMessage);
+      const errorMessage = error.response?.data?.message || "An error occurred";
+      setMessage("Error: " + errorMessage);
     } finally {
       setLoading(false);
     }
@@ -89,7 +89,7 @@ function Register() {
           </select>
         </InputGroup>
         <Button onClick={handleSignup} disabled={loading}>
-          {loading ? 'Signing up...' : 'Sign Up'}
+          {loading ? "Signing up..." : "Sign Up"}
         </Button>
         {message && <Message>{message}</Message>}
         <Link to="/login-page">Already have an account? Log In</Link>

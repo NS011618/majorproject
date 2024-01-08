@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const UserCard = ({ username, userRole }) => (
   <div className="bg-white p-4 rounded-md shadow-md mb-4">
@@ -14,8 +14,8 @@ const Admindashboard = () => {
   const [username, setUsername] = useState(null);
 
   useEffect(() => {
-    const storedRole = localStorage.getItem('userRole');
-    const storedName = localStorage.getItem('userName');
+    const storedRole = localStorage.getItem("userRole");
+    const storedName = localStorage.getItem("userName");
 
     if (storedRole && storedName) {
       setUserRole(storedRole);
@@ -24,18 +24,22 @@ const Admindashboard = () => {
   }, []);
 
   const handleInput = () => {
-    navigate('/input-data');
+    navigate("/input-data");
   };
 
   return (
     <div className="flex flex-col h-screen p-4 ">
       <div className="md:w-1/2 md:mr-5">
-        {username && userRole && <UserCard username={username} userRole={userRole} />}
+        {username && userRole && (
+          <UserCard username={username} userRole={userRole} />
+        )}
       </div>
 
       <div className="flex flex-col md:flex-row mt-4 ">
         <div className="bg-white p-3 rounded-md shadow-md mb-4 md:w-1/2">
-          <h1 className="text-3xl font-bold mb-4">Welcome to Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold mb-4">
+            Welcome to Admin Dashboard
+          </h1>
         </div>
 
         <div className="bg-white p-3 rounded-md shadow-md mb-4 md:w-1/4 ml-auto">

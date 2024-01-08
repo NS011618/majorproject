@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import logo2 from '../assets/logo2.avif';
+import React, { useState } from "react";
+import logo2 from "../assets/logo2.avif";
 
 function Contact() {
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    message: '',
+    first_name: "",
+    last_name: "",
+    email: "",
+    message: "",
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/contact', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/contact", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json', // Set content type to JSON
+          "Content-Type": "application/json", // Set content type to JSON
         },
         body: JSON.stringify(formData), // Convert form data to JSON
       });
@@ -24,7 +24,7 @@ function Contact() {
       const result = await response.json();
       console.log(result);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
     }
   };
 
@@ -37,13 +37,14 @@ function Contact() {
       <section className="bg-white min-h-screen">
         <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center">
-
             <div className="mb-4 sm:mb-0 sm:mr-6 flex-shrink-0">
               <img src={logo2} alt="Contact Us" className="mx-auto max-w-xs" />
             </div>
 
             <div className="mt-6 sm:mt-0 bg-white shadow-md p-6 rounded-lg sm:flex-grow">
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Contact Us</h2>
+              <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+                Contact Us
+              </h2>
               <p className="mt-4 text-lg text-gray-600">
                 Have questions or feedback? Get in touch with us.
               </p>
@@ -117,7 +118,7 @@ function Contact() {
                         name="message"
                         rows={4}
                         className="py-2 px-4 w-full bg-gray-100 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-md shadow-sm"
-                        defaultValue={''}
+                        defaultValue={""}
                         onChange={handleChange}
                       />
                     </div>

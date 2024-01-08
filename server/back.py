@@ -4,13 +4,16 @@ import bcrypt
 from bson import ObjectId
 from flask_cors import CORS,cross_origin
 from flask_mail import Mail, Message
+
+# Import the required libraries for machine learning
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-
+from sklearn.metrics import accuracy_score
+import numpy as np
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -152,16 +155,24 @@ def contact():
         return jsonify({'error': str(e)}), 500
 
 
-def train_and_evaluate_classifier(algorithm):
+# Check and create 'symptomdetail' collection
+symptom_data_name = 'symptomdetail'
+symptom_data = mongo.db[symptom_data_name]
+
+
+def train_and_evaluate_classifier(selected_algorithm):
     symptoms = []
     labels = []
 
+    # Assuming admin_data is a collection or data source
     for doc in admin_data.find():
-        # Assuming the 'symptoms' field is an array in the MongoDB document
-        symptoms.append(doc['symptoms'])
+        symptoms.append(' '.join(doc['symptoms']))  # Assuming symptoms is a list of strings
         labels.append(doc['disease'])
 
-    X_train, X_test, y_train, y_test = train_test_split(symptoms, labels, test_size=0.2, random_state=42)
+    vectorizer = TfidfVectorizer()
+    X = vectorizer.fit_transform(symptoms)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, labels, test_size=0.2, random_state=42)
 
     algorithms = {
         'NaiveBayes': MultinomialNB(),
@@ -170,10 +181,11 @@ def train_and_evaluate_classifier(algorithm):
         'SVM': SVC(kernel='linear')
     }
 
-    if algorithm not in algorithms:
-        return "Invalid algorithm"
+    try:
+        clf = algorithms[selected_algorithm]
+    except KeyError:
+        return None, None, "Invalid algorithm"
 
-    clf = algorithms[algorithm]
     clf.fit(X_train, y_train)
 
     # Make predictions on the test set
@@ -182,50 +194,78 @@ def train_and_evaluate_classifier(algorithm):
     # Calculate accuracy
     accuracy = accuracy_score(y_test, y_pred)
 
-    return clf, accuracy
+    return clf, accuracy, None, vectorizer
 
-def predict_disease_algorithm(s1, s2, s3, s4, s5, algorithm):
-    clf, accuracy = train_and_evaluate_classifier(algorithm)
+def predict_disease_algorithm(symptoms, selected_algorithm, clf, vectorizer):
+    try:
+        # Ensure symptoms is a list of strings
+        if not all(isinstance(symptom, str) for symptom in symptoms):
+            raise ValueError("Symptoms should be a list of strings")
 
-    # Make a prediction based on input symptoms
-    predicted_disease = clf.predict([[s1, s2, s3, s4, s5]])[0]
+        # Vectorize the input symptoms
+        symptoms_vectorized = vectorizer.transform(symptoms)
 
-    return predicted_disease, accuracy
+        # Make a prediction based on vectorized symptoms
+        predicted_disease = clf.predict(symptoms_vectorized)[0]
+
+        return predicted_disease
+    except ValueError as e:
+        # Log the exception details
+        print("ValueError:", str(e))
+        raise ValueError("Invalid input format")
 
 @app.route('/predictdisease', methods=['POST'])
 def predict_disease_flask():
     try:
         data = request.get_json()
-        s1 = data.get('symptom1', '')
-        s2 = data.get('symptom2', '')
-        s3 = data.get('symptom3', '')
-        s4 = data.get('symptom4', '')
-        s5 = data.get('symptom5', '')
+        symptoms = data.get('symptoms', [])
         algorithm = data.get('algorithm', 'NaiveBayes')  # Default to NaiveBayes if not specified
 
-        result, accuracy = predict_disease_algorithm(s1, s2, s3, s4, s5, algorithm)
+        clf, accuracy, error, vectorizer = train_and_evaluate_classifier(algorithm)
+
+        if error:
+            return jsonify({'error': error}), 400  # Return a 400 Bad Request status for an invalid algorithm
+
+        result = predict_disease_algorithm(symptoms, algorithm, clf, vectorizer)
 
         return jsonify({'predicted_disease': result, 'accuracy': accuracy}), 200
 
+    except ValueError as ve:
+        return jsonify({'error': 'Invalid input format', 'details': str(ve)}), 400
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        # Log the exception details
+        print("Exception:", str(e))
+
+        # Return a more informative error response
+        return jsonify({'error': 'Internal Server Error', 'details': str(e)}), 500
+
 
 # Assuming you have an API route like '/getsymptoms'
 
 @app.route('/getsymptoms', methods=['GET'])
 def get_symptoms():
     try:
-        # Fetch symptoms from the database where get_symptoms is True
-        symptoms_cursor = admin_data.find({'get_symptoms': 'yes'}, {'_id': 0, 'symptoms': 1})
+        # Retrieve all documents from the 'symptom_data' collection
+        symptoms_cursor = symptom_data.find()
 
         # Convert MongoDB cursor to a list of dictionaries
         symptom_list = list(symptoms_cursor)
 
+        # Convert ObjectId to string for each document
+        for symptom in symptom_list:
+            symptom['_id'] = str(symptom['_id'])
+
+        # Return the list of symptoms as JSON response
         return jsonify(symptom_list), 200, {'Content-Type': 'application/json', 'Cache-Control': 'no-cache'}
 
     except Exception as e:
+        # Log the error for debugging purposes
         print(f"Error fetching symptoms: {str(e)}")
-        return jsonify({'error': 'Internal Server Error'}), 500
+
+        # Return a more informative error response
+        error_message = {'error': 'Internal Server Error', 'details': str(e)}
+        return jsonify(error_message), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

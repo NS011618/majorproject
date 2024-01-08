@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Papa from 'papaparse';
-import { inputRoute } from '../utils/APIRoutes'; // Adjust your import based on actual API routes
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Papa from "papaparse";
+import { inputRoute } from "../utils/APIRoutes"; // Adjust your import based on actual API routes
 
 const Inputdat = () => {
   const navigate = useNavigate();
@@ -14,10 +14,9 @@ const Inputdat = () => {
   useEffect(() => {
     // Check the login status when the component mounts
     const checkrole = () => {
-      const storedRole = localStorage.getItem('userRole');
+      const storedRole = localStorage.getItem("userRole");
       setUserRole(storedRole);
       console.log(storedRole);
-      
     };
 
     checkrole();
@@ -44,8 +43,8 @@ const Inputdat = () => {
           // Filter out rows with empty values
           const nonEmptyRows = results.data.filter((row) =>
             Object.values(row).some(
-              (value) => value !== null && value !== undefined && value !== ''
-            )
+              (value) => value !== null && value !== undefined && value !== "",
+            ),
           );
 
           // Append the data from the current file to the existing data
@@ -64,41 +63,39 @@ const Inputdat = () => {
     });
   };
 
-  
-
   const postDataToPublicURL = async () => {
     if (csvData.length === 0) {
-      setPostDataResponse('No data to post');
+      setPostDataResponse("No data to post");
       return;
     }
 
     try {
       const response = await fetch(inputRoute, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify([userRole,csvData]),
-        credentials: 'include',
+        body: JSON.stringify([userRole, csvData]),
+        credentials: "include",
       });
-      
+
       if (response.ok) {
-        setPostDataResponse('Data posted successfully');
+        setPostDataResponse("Data posted successfully");
 
         // Navigate based on the user role
-        if (userRole === 'admin') {
-          navigate('/admin-dashboard');
-        } else if (userRole === 'patient') {
-          navigate('/patient-dashboard');
+        if (userRole === "admin") {
+          navigate("/admin-dashboard");
+        } else if (userRole === "patient") {
+          navigate("/patient-dashboard");
         } else {
-          console.error('Unknown user role:', userRole);
+          console.error("Unknown user role:", userRole);
         }
       } else {
-        setPostDataResponse('Failed to post data');
+        setPostDataResponse("Failed to post data");
       }
     } catch (error) {
-      console.error('Error posting data:', error);
-      setPostDataResponse('An error occurred while posting data');
+      console.error("Error posting data:", error);
+      setPostDataResponse("An error occurred while posting data");
     }
   };
 
@@ -122,9 +119,7 @@ const Inputdat = () => {
                   }}
                 />
                 <button onClick={() => handleEditFileName(index)}>Save</button>
-                {editedFileNames[index] !== fileName && (
-                  <span> (Edited)</span>
-                )}
+                {editedFileNames[index] !== fileName && <span> (Edited)</span>}
               </li>
             ))}
           </ul>

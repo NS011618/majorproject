@@ -1,29 +1,27 @@
-import React, { useState , useEffect} from 'react';
-import axios from 'axios';
-import styled from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
-import { loginRoute } from '../utils/APIRoutes';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import styled from "styled-components";
+import { Link, useNavigate } from "react-router-dom";
+import { loginRoute } from "../utils/APIRoutes";
 
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('patient');
-  const [message, setMessage] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("patient");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
 
   useEffect(() => {
-    const storedRole = localStorage.getItem('userRole');
-    const storedName = localStorage.getItem('userName');
-    
+    const storedRole = localStorage.getItem("userRole");
+    const storedName = localStorage.getItem("userName");
+
     if (storedRole && storedName) {
       setRole(storedRole);
-      setUsername(storedName);     
+      setUsername(storedName);
     }
   }, []);
-  
 
   const handleLogin = async () => {
     try {
@@ -36,21 +34,19 @@ const Login = ({ onLogin }) => {
       });
 
       if (response.status === 200) {
-        setMessage('Login successful');
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userRole',role);      
-        localStorage.setItem('userName',username); 
+        setMessage("Login successful");
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("userRole", role);
+        localStorage.setItem("userName", username);
         onLogin(); // Notify the parent component about the successful login
-        if(role === 'admin'){
-          navigate('/admin-dashboard');
+        if (role === "admin") {
+          navigate("/admin-dashboard");
+        } else {
+          navigate("/patient-dashboard");
         }
-        else{
-          navigate('/patient-dashboard');
-        }
-        
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'An error occurred';
+      const errorMessage = error.response?.data?.message || "An error occurred";
       setMessage(errorMessage);
     } finally {
       setLoading(false);
@@ -81,7 +77,7 @@ const Login = ({ onLogin }) => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </InputGroup>
-          
+
         <InputGroup>
           <label>Password:</label>
           <Input
@@ -100,7 +96,7 @@ const Login = ({ onLogin }) => {
           </select>
         </InputGroup>
         <Button onClick={handleLogin} disabled={loading}>
-          {loading ? 'Logging in...' : 'Log In'}
+          {loading ? "Logging in..." : "Log In"}
         </Button>
         {message && <Message>{message}</Message>}
         <Link to="/">Don't have an account? Register</Link>
