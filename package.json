@@ -35,7 +35,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "prettier --write src/**/*.jsx"
   },
   "eslintConfig": {
     "extends": [
@@ -57,8 +58,8 @@
   },
   "devDependencies": {
     "prettier": "^3.1.1",
-    "tailwindcss": "^3.3.3"
-  },
+    "tailwindcss": "^3.4.1"
+  },  
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "tailwind.config.js",
   "author": "",
