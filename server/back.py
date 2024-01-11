@@ -161,23 +161,30 @@ symptom_data = mongo.db[symptom_data_name]
 
 
 def train_and_evaluate_classifier(selected_algorithm):
-    symptoms = []
+    symptoms_list = []
     labels = []
+    
 
     # Assuming admin_data is a collection or data source
     for doc in admin_data.find():
-        symptoms.append(' '.join(doc['symptoms']))  # Assuming symptoms is a list of strings
-        labels.append(doc['disease'])
+        symptoms = doc['symptoms']
+        symptoms_list.extend(symptoms)
+        diseases=doc['disease']
+        labels.extend([diseases] * len(symptoms))
+        
+
+    
+    print(labels)
 
     vectorizer = TfidfVectorizer()
-    X = vectorizer.fit_transform(symptoms)
+    X = vectorizer.fit_transform(symptoms_list)
+
+    
 
     X_train, X_test, y_train, y_test = train_test_split(X, labels, test_size=0.2, random_state=42)
 
     algorithms = {
         'NaiveBayes': MultinomialNB(),
-        'DecisionTree': DecisionTreeClassifier(),
-        'RandomForest': RandomForestClassifier(),
         'SVM': SVC(kernel='linear')
     }
 

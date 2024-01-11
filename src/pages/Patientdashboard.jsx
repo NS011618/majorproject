@@ -24,7 +24,7 @@ const PatientDashboard = () => {
    const [symptomsError, setSymptomsError] = useState(null)
    const [predictionError, setPredictionError] = useState(null)
    const [searchTerm, setSearchTerm] = useState('')
-   const algorithmOptions = ['NaiveBayes', 'DecisionTree', 'RandomForest', 'SVM']
+   const algorithmOptions = ['NaiveBayes', 'SVM']
 
    // Fetch user role and name from local storage and symptoms data from the server
    useEffect(() => {
