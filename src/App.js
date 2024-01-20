@@ -65,7 +65,7 @@ function App() {
       <header className="w-full flex items-center sm:px-8 px-4 py-4 border-b border-b-[#e6ebf4] bg-gray-300">
         <h3
           to=""
-          className="w-full text-xl font-semibold object-contain font-inter font-medium bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md"
+          className="w-full text-xl font-semibold object-contain font-inter bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md"
         >
           Medical History
         </h3>

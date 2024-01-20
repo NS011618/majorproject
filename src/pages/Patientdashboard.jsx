@@ -24,7 +24,7 @@ const PatientDashboard = () => {
    const [symptomsError, setSymptomsError] = useState(null)
    const [predictionError, setPredictionError] = useState(null)
    const [searchTerm, setSearchTerm] = useState('')
-   const algorithmOptions = ['NaiveBayes', 'SVM']
+   const algorithmOptions = ['NaiveBayes']
 
    // Fetch user role and name from local storage and symptoms data from the server
    useEffect(() => {
@@ -131,7 +131,7 @@ const PatientDashboard = () => {
       <div className="flex flex-col h-screen p-2 bg-gray-100">
          {/* Header */}
          <div className="flex flex-col md:flex-row">
-            <div className="bg-white rounded-md shadow-md md:w-2/3 p-6 bg-slate-300 mb-4">
+            <div className="bg-white rounded-md shadow-md md:w-2/3 p-6 mb-4">
                <h1 className="text-3xl font-bold mb-4 text-gray-800">
                   Welcome to the Patient Dashboard
                </h1>
@@ -150,7 +150,7 @@ const PatientDashboard = () => {
          <div className="flex p-2 flex-col h-screen">
             {/* Disease Prediction Section */}
             <div className="flex flex-col md:flex-row">
-               <div className="bg-white rounded-md shadow-md md:w-1/3 p-6 bg-slate-300">
+               <div className="bg-white rounded-md shadow-md md:w-1/3 p-6">
                   <div className="mt-4">
                      <h2 className="text-xl font-bold mb-2 text-gray-800">
                         Disease Prediction
@@ -233,7 +233,7 @@ const PatientDashboard = () => {
                            </p>
                            {accuracy !== null && (
                               <p className="text-gray-800">
-                                 Accuracy: <strong>{(accuracy * 100).toFixed(2)}%</strong>
+                                 Accuracy: <strong>{(accuracy)}%</strong>
                               </p>
                            )}
                         </div>
@@ -242,7 +242,7 @@ const PatientDashboard = () => {
                </div>
 
                {/* Symptom Selection Section */}
-               <div className="bg-white rounded-md shadow-md md:w-2/4 ml-auto p-6 bg-slate-300">
+               <div className="bg-white rounded-md shadow-md md:w-2/4 ml-auto p-6">
                   {symptomsError && <p className="text-red-600">{symptomsError}</p>}
                   {symptomsLoaded ? (
                      <form>
