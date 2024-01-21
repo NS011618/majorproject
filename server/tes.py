@@ -29,7 +29,7 @@ admin_collection = mongo.db[admin_collection_name]
 patient_collection_name = 'prole'
 patient_collection = mongo.db[patient_collection_name]
 
-'''***************************************************** Signup Code ***********************************************************************'''
+'''*****************************************************Signup Code**************************************************************************'''
 @app.route('/signup', methods=['POST'])
 def signup():
     try:
@@ -60,7 +60,7 @@ def signup():
     except Exception as e:
         return jsonify({'status': False, 'msg': str(e)}), 500
 
-'''***************************************************** Login Code ************************************************************************'''
+'''*****************************************************Login Code**************************************************************************'''
 @app.route('/login', methods=['POST'])
 @cross_origin(supports_credentials=True)
 def login():
@@ -98,7 +98,7 @@ admin_data = mongo.db[admin_data_name]
 patient_data_name = 'proledetail'
 patient_data = mongo.db[patient_data_name]
 
-'''**************************************************** Input data Code ********************************************************************'''
+'''*****************************************************input data Code**************************************************************************'''
 #post data to database
 @app.route('/fetchinput', methods=['POST'])
 @cross_origin(supports_credentials=True)
@@ -131,7 +131,7 @@ def receive_and_save_data():
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
 
-'''***************************************************** Contact us Code *******************************************************************'''
+'''*****************************************************Contact us Code**************************************************************************'''
 @app.route('/contact', methods=['POST'])
 def contact():
     try:
@@ -163,6 +163,95 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 import numpy as np
 import pandas as pd
+
+'''def train_and_evaluate_classifier(selected_algorithm):
+    symptoms_list = []
+    labels = []
+    
+
+    # Assuming admin_data is a collection or data source
+    for doc in admin_data.find():
+        symptoms = doc['symptoms']
+        symptoms_list.extend(symptoms)
+        diseases=doc['disease']
+        labels.extend([diseases] * len(symptoms))
+        
+
+    
+    print(labels)
+
+    vectorizer = TfidfVectorizer()
+    X = vectorizer.fit_transform(symptoms_list)
+
+        
+
+    X_train, X_test, y_train, y_test = train_test_split(X, labels, test_size=0.2, random_state=42)
+
+    algorithms = {
+        'NaiveBayes': MultinomialNB(),
+        'SVM': SVC(kernel='linear')
+    }
+
+    try:
+        clf = algorithms[selected_algorithm]
+    except KeyError:
+        return None, None, "Invalid algorithm"
+
+    clf.fit(X_train, y_train)
+
+    # Make predictions on the test set
+    y_pred = clf.predict(X_test)
+
+    # Calculate accuracy
+    accuracy = accuracy_score(y_test, y_pred)
+    
+    return clf, accuracy, None, vectorizer
+
+def predict_disease_algorithm(symptoms, selected_algorithm, clf, vectorizer):
+    try:
+        # Ensure symptoms is a list of strings
+        if not all(isinstance(symptom, str) for symptom in symptoms):
+            raise ValueError("Symptoms should be a list of strings")
+
+        # Vectorize the input symptoms
+        symptoms_vectorized = vectorizer.transform(symptoms)
+
+        # Make a prediction based on vectorized symptoms
+        predicted_disease = clf.predict(symptoms_vectorized)[0]
+
+        return predicted_disease
+    except ValueError as e:
+        # Log the exception details
+        print("ValueError:", str(e))
+        raise ValueError("Invalid input format")
+    '''
+
+    
+'''
+@app.route('/predictdisease', methods=['POST'])
+def predict_disease_flask():
+    try:
+        data = request.get_json()
+        symptoms = data.get('symptoms', [])
+        algorithm = data.get('algorithm', 'NaiveBayes')  # Default to NaiveBayes if not specified
+
+        clf, accuracy, error, vectorizer = train_and_evaluate_classifier(algorithm)
+
+        if error:
+            return jsonify({'error': error}), 400  # Return a 400 Bad Request status for an invalid algorithm
+
+        result = predict_disease_algorithm(symptoms, algorithm, clf, vectorizer)
+
+        return jsonify({'predicted_disease': result, 'accuracy': accuracy}), 200
+
+    except ValueError as ve:
+        return jsonify({'error': 'Invalid input format', 'details': str(ve)}), 400
+    except Exception as e:
+        # Log the exception details
+        print("Exception:", str(e))
+
+        # Return a more informative error response
+        return jsonify({'error': 'Internal Server Error', 'details': str(e)}), 500'''
 
 
 '''********************** Train the Model *******************************'''
