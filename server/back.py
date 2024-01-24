@@ -5,9 +5,21 @@ from bson import ObjectId
 from flask_cors import CORS,cross_origin
 from flask_mail import Mail, Message
 
+
+
+# Import the required libraries for machine learning
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+import numpy as np
+import pandas as pd
+
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
-
 
 # Email Configuration
 app.config['MAIL_SERVER'] = 'localhost'
@@ -29,7 +41,7 @@ admin_collection = mongo.db[admin_collection_name]
 patient_collection_name = 'prole'
 patient_collection = mongo.db[patient_collection_name]
 
-'''***************************************************** Signup Code ***********************************************************************'''
+'''*****************************************************Signup Code**************************************************************************'''
 @app.route('/signup', methods=['POST'])
 def signup():
     try:
@@ -60,7 +72,7 @@ def signup():
     except Exception as e:
         return jsonify({'status': False, 'msg': str(e)}), 500
 
-'''***************************************************** Login Code ************************************************************************'''
+'''*****************************************************Login Code**************************************************************************'''
 @app.route('/login', methods=['POST'])
 @cross_origin(supports_credentials=True)
 def login():
@@ -89,7 +101,6 @@ def login():
         return jsonify({'status': False, 'msg': str(e)}), 500
 
 
-
 # Check and create 'aroledetail' collection
 admin_data_name = 'aroledetail'
 admin_data = mongo.db[admin_data_name]
@@ -98,7 +109,7 @@ admin_data = mongo.db[admin_data_name]
 patient_data_name = 'proledetail'
 patient_data = mongo.db[patient_data_name]
 
-'''**************************************************** Input data Code ********************************************************************'''
+'''*****************************************************input data Code**************************************************************************'''
 #post data to database
 @app.route('/fetchinput', methods=['POST'])
 @cross_origin(supports_credentials=True)
@@ -131,7 +142,7 @@ def receive_and_save_data():
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
 
-'''***************************************************** Contact us Code *******************************************************************'''
+'''*****************************************************Contact us Code**************************************************************************'''
 @app.route('/contact', methods=['POST'])
 def contact():
     try:
@@ -152,21 +163,8 @@ def contact():
 symptom_data_name = 'symptomdetail'
 symptom_data = mongo.db[symptom_data_name]
 
+
 '''************************************************** ML Code To predict Disease ***********************************************************'''
-# Import the required libraries for machine learning
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score
-import numpy as np
-import pandas as pd
-
-
-'''********************** Train the Model *******************************'''
-
 def train_evaluate_predict(selected_algorithm, symptoms):
     try:
         # Features and target variable
@@ -278,6 +276,7 @@ def train_evaluate_predict(selected_algorithm, symptoms):
         print("Exception:", str(e))
         return jsonify({'error': 'Internal Server Error', 'details': str(e)}), 500
 
+
 '''********************** Predict the Disease *******************************'''
 @app.route('/predictdisease', methods=['POST'])
 def predict_disease_flask():
@@ -295,9 +294,7 @@ def predict_disease_flask():
         return jsonify({'error': 'Internal Server Error', 'details': str(e)}), 500
 
 
-
 '''********************** Fetching symptoms  *******************************'''
-
 @app.route('/getsymptoms', methods=['GET'])
 def get_symptoms():
     try:
