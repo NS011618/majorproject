@@ -9,7 +9,7 @@
 - Storing patient,admin credentials and csv data in mongodb database
 - Implementing contact functionality (using mailhog to communicate)
 - Added sypmtoms data set and also disease dataset in mongodb 
-- Adding Machine learning model and predicting the disease(need to improve the code)
+- Adding Machine learning model(decision tree model) and predicting the disease
 ## Team members:
 - Sathvik Bandru
 - Ashish Golla
