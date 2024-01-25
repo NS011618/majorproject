@@ -19,12 +19,12 @@ const PatientDashboard = () => {
    const [selectedSymptoms, setSelectedSymptoms] = useState([])
    const [predictedDisease, setPredictedDisease] = useState('')
    const [accuracy, setAccuracy] = useState(null)
-   const [algorithm, setAlgorithm] = useState('NaiveBayes')
+   const [algorithm, setAlgorithm] = useState('DecisionTree')
    const [symptomsLoaded, setSymptomsLoaded] = useState(false)
    const [symptomsError, setSymptomsError] = useState(null)
    const [predictionError, setPredictionError] = useState(null)
    const [searchTerm, setSearchTerm] = useState('')
-   const algorithmOptions = ['NaiveBayes']
+   const algorithmOptions = ['DecisionTree']
 
    // Fetch user role and name from local storage and symptoms data from the server
    useEffect(() => {
@@ -47,7 +47,7 @@ const PatientDashboard = () => {
 
             if (response.ok) {
                const symptoms = await response.json()
-               setSymptomsList(symptoms)
+               setSymptomsList(symptoms)               
                setSymptomsLoaded(true)
             } else {
                setSymptomsError('Failed to fetch symptoms. Please try again later.')
@@ -94,6 +94,8 @@ const PatientDashboard = () => {
             body: JSON.stringify({
                symptoms: selectedSymptoms,
                algorithm: algorithm,
+               listsymptoms:symptomsList[0]['sname'],
+               
             }),
          })
 
@@ -101,7 +103,7 @@ const PatientDashboard = () => {
             const result = await response.json()
             setPredictedDisease(result.predicted_disease)
             setAccuracy(result.accuracy)
-            setPredictionError(null)
+            setPredictionError(null)            
          } else {
             setPredictionError('Failed to get prediction. Please try again later.')
             console.error(
