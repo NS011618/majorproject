@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 import bcrypt
-from bson import ObjectId
+#from bson import ObjectId
 from flask_cors import CORS,cross_origin
 from flask_mail import Mail, Message
 
@@ -177,6 +177,8 @@ def predict_disease_flask():
         # getsymptoms
         getsymp = data.get('listsymptoms', [])
 
+        pastdata=data.get('pasthistory',[])
+        
         l1 = len(getsymp)
 
         l2 = np.zeros(l1)
@@ -191,7 +193,7 @@ def predict_disease_flask():
                    'Urinary tract infection', 'Psoriasis', 'Impetigo']'''
 
         # Load training data
-        train_data = pd.read_csv(r"C:\Users\OS23H\OneDrive\Desktop\project\server\Training_Predict.csv")
+        train_data = pd.read_csv(r"C:\Users\NANIS\OneDrive\Desktop\testingproject\server\Training_Predict.csv")
 
         df = pd.DataFrame(train_data)
 
@@ -221,7 +223,7 @@ def predict_disease_flask():
         accuracy = accuracy_score(y_test, y_pred)
    
 
-        test_data = pd.read_csv(r"C:\Users\OS23H\OneDrive\Desktop\project\server\Testing_Predict.csv")
+        test_data = pd.read_csv(r"C:\Users\NANIS\OneDrive\Desktop\testingproject\server\Testing_Predict.csv")
         
         testx=test_data[cols]
         testy=test_data['prognosis']
@@ -231,6 +233,10 @@ def predict_disease_flask():
 
         # Predict disease based on input symptoms
         for k, symptom in enumerate(getsymp):
+            if symptom in symptoms:
+                l2[k] = 1
+        
+        for k, symptom in enumerate(pastdata):
             if symptom in symptoms:
                 l2[k] = 1
 
@@ -271,6 +277,41 @@ def get_symptoms():
         # Return a more informative error response
         error_message = {'error': 'Internal Server Error', 'details': str(e)}
         return jsonify(error_message), 500
+
+@app.route('/getpastdata', methods=['GET'])
+def get_past_history():
+    try:
+        username = request.args.get('username')
+        print(username)
+
+        if not username:
+            return jsonify({'error': 'Username not provided'}), 400
+
+        # Assuming you have a field 'Name' in the collection to match with the username
+        user_data = patient_data.find_one({'Name': username})
+
+        if not user_data:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Extract and return past history data
+        past_history = {
+            'Sno': user_data.get('Sno'),
+            'Name': user_data.get('Name'),
+            'Age': user_data.get('Age'),
+            'Sex': user_data.get('Sex'),
+            'Dates': user_data.get('Dates'),
+            'Description': user_data.get('Description'),
+            'Medical_specialty': user_data.get('Medical_specialty'),
+            'Sample_name': user_data.get('Sample_name'),
+            'Transcription': user_data.get('Transcription'),
+            'Keywords': user_data.get('Keywords')
+            # Add more fields as needed
+        }
+
+        return jsonify(past_history), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':

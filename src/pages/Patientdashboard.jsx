@@ -1,6 +1,6 @@
 // Import necessary dependencies and API routes
 import React, { useState, useEffect } from 'react'
-import { predictRoute, getSymptomsRoute } from '../utils/APIRoutes'
+import { predictRoute, getSymptomsRoute, gethistory } from '../utils/APIRoutes'
 
 // UserCard component for displaying user information
 const UserCard = ({ username, userRole }) => (
@@ -26,6 +26,8 @@ const PatientDashboard = () => {
    const [searchTerm, setSearchTerm] = useState('')
    const algorithmOptions = ['DecisionTree']
 
+   const [pasthistory, setPastHistory] = useState(null)
+
    // Fetch user role and name from local storage and symptoms data from the server
    useEffect(() => {
       const storedRole = localStorage.getItem('userRole')
@@ -38,16 +40,22 @@ const PatientDashboard = () => {
 
       const fetchSymptoms = async () => {
          try {
-            const response = await fetch(getSymptomsRoute, {
-               method: 'GET',
-               headers: {
-                  'Content-Type': 'application/json',
+            const response = await fetch(
+               getSymptomsRoute,
+               {
+                  username: username,
                },
-            })
+               {
+                  method: 'GET',
+                  headers: {
+                     'Content-Type': 'application/json',
+                  },
+               },
+            )
 
             if (response.ok) {
                const symptoms = await response.json()
-               setSymptomsList(symptoms)               
+               setSymptomsList(symptoms)
                setSymptomsLoaded(true)
             } else {
                setSymptomsError('Failed to fetch symptoms. Please try again later.')
@@ -64,6 +72,40 @@ const PatientDashboard = () => {
       }
 
       fetchSymptoms()
+   }, [])
+
+   // Fetch user role, name, symptoms data, and past history from the server
+   useEffect(() => {
+      const fetchPastHistory = async () => {
+         try {
+            const storedName = localStorage.getItem('userName')
+            const response = await fetch(`${gethistory}?username=${storedName}`, {
+               method: 'GET',
+               headers: {
+                  'Content-Type': 'application/json',
+               },
+            })
+
+            if (response.ok) {
+               const pastHistoryData = await response.json()
+               const keywordsArray = pastHistoryData.Keywords.split(',').map((keyword) => keyword.trim());
+               const filteredKeywords = keywordsArray.filter(keyword => keyword !== '');
+               const replacedSpacesKeywords = filteredKeywords.map(keyword => keyword.replace(/ /g, '_'));
+               setPastHistory(replacedSpacesKeywords);
+               console.log(replacedSpacesKeywords)
+            } else {
+               console.error(
+                  'Failed to fetch past history. Server returned:',
+                  response.status,
+                  response.statusText,
+               )
+            }
+         } catch (error) {
+            console.error('Error fetching past history:', error)
+         }
+      }
+
+      fetchPastHistory()
    }, [])
 
    // Toggle selected symptoms
@@ -94,8 +136,8 @@ const PatientDashboard = () => {
             body: JSON.stringify({
                symptoms: selectedSymptoms,
                algorithm: algorithm,
-               listsymptoms:symptomsList[0]['sname'],
-               
+               listsymptoms: symptomsList[0]['sname'],
+               pasthistory:pasthistory
             }),
          })
 
@@ -103,7 +145,7 @@ const PatientDashboard = () => {
             const result = await response.json()
             setPredictedDisease(result.predicted_disease)
             setAccuracy(result.accuracy)
-            setPredictionError(null)            
+            setPredictionError(null)
          } else {
             setPredictionError('Failed to get prediction. Please try again later.')
             console.error(
@@ -235,7 +277,7 @@ const PatientDashboard = () => {
                            </p>
                            {accuracy !== null && (
                               <p className="text-gray-800">
-                                 Accuracy: <strong>{(accuracy)}%</strong>
+                                 Accuracy: <strong>{accuracy}%</strong>
                               </p>
                            )}
                         </div>
@@ -256,10 +298,7 @@ const PatientDashboard = () => {
                            <div className="flex">
                               <div className="mb-4 max-h-96 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                  {symptomsList.map((category, index) => (
-                                    <div
-                                       key={index}
-                                       className="bg-white p-4 rounded-md "
-                                    >
+                                    <div key={index} className="bg-white p-4 rounded-md ">
                                        <p className="text-blue-600 font-semibold mb-2">
                                           {category.category}
                                        </p>

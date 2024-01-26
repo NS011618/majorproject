@@ -5,3 +5,4 @@ export const logoutRoute = `${host}/logout`;
 export const inputRoute = `${host}/fetchinput`;
 export const predictRoute = `${host}/predictdisease`;
 export const getSymptomsRoute = `${host}/getsymptoms`;
+export const gethistory = `${host}/getpastdata`;
