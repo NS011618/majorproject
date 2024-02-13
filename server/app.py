@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 import bcrypt
-#from bson import ObjectId
 from flask_cors import CORS,cross_origin
 from flask_mail import Mail, Message
 
+from dotenv import load_dotenv
+load_dotenv()
 
+import os
 
 # Import the required libraries for machine learning
 from sklearn.model_selection import train_test_split
@@ -42,7 +44,7 @@ admin_collection = mongo.db[admin_collection_name]
 patient_collection_name = 'prole'
 patient_collection = mongo.db[patient_collection_name]
 
-'''*****************************************************Signup Code**************************************************************************'''
+'''***************************************************** Signup Code **************************************************************************'''
 @app.route('/signup', methods=['POST'])
 def signup():
     try:
@@ -73,7 +75,7 @@ def signup():
     except Exception as e:
         return jsonify({'status': False, 'msg': str(e)}), 500
 
-'''*****************************************************Login Code**************************************************************************'''
+'''***************************************************** Login Code **************************************************************************'''
 @app.route('/login', methods=['POST'])
 @cross_origin(supports_credentials=True)
 def login():
@@ -110,7 +112,7 @@ admin_data = mongo.db[admin_data_name]
 patient_data_name = 'proledetail'
 patient_data = mongo.db[patient_data_name]
 
-'''*****************************************************input data Code**************************************************************************'''
+'''*************************************************** Input Data Code ************************************************************************'''
 #post data to database
 @app.route('/fetchinput', methods=['POST'])
 @cross_origin(supports_credentials=True)
@@ -143,7 +145,7 @@ def receive_and_save_data():
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
 
-'''*****************************************************Contact us Code**************************************************************************'''
+'''**************************************************** Contact us Code ************************************************************************'''
 @app.route('/contact', methods=['POST'])
 def contact():
     try:
@@ -193,7 +195,7 @@ def predict_disease_flask():
                    'Urinary tract infection', 'Psoriasis', 'Impetigo']'''
 
         # Load training data
-        train_data = pd.read_csv(r"C:\Users\NANIS\OneDrive\Desktop\testingproject\server\Training_Predict.csv")
+        train_data = pd.read_csv(r"C:\Users\OS23H\OneDrive\Desktop\project\server\Training_Predict.csv")
 
         df = pd.DataFrame(train_data)
 
@@ -223,7 +225,7 @@ def predict_disease_flask():
         accuracy = accuracy_score(y_test, y_pred)
    
 
-        test_data = pd.read_csv(r"C:\Users\NANIS\OneDrive\Desktop\testingproject\server\Testing_Predict.csv")
+        test_data = pd.read_csv(r"C:\Users\OS23H\OneDrive\Desktop\project\server\Testing_Predict.csv")
         
         testx=test_data[cols]
         testy=test_data['prognosis']
@@ -305,7 +307,7 @@ def get_past_history():
             'Sample_name': user_data.get('Sample_name'),
             'Transcription': user_data.get('Transcription'),
             'Keywords': user_data.get('Keywords')
-            # Add more fields as needed
+            # Add more fields if needed
         }
 
         return jsonify(past_history), 200
