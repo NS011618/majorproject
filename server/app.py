@@ -136,14 +136,20 @@ def receive_and_save_data():
             # Check if a record with the same "Sno" already exists in the database
             existing_record = collection.find_one({"Sno": record["Sno"]})
             if existing_record:
-                return jsonify({'message': f'Duplicate record with Sno {record["Sno"]} exists'}), 400
-
-        # Insert the received data into the MongoDB collection
-        result = collection.insert_many(data[1])
+                # If the record already exists, update it
+                result = collection.replace_one({"Sno": record["Sno"]}, record)
+                if result.modified_count == 0:
+                    return jsonify({'message': f'Failed to update record with Sno {record["Sno"]}'}), 500
+            else:
+                # If the record doesn't exist, insert it
+                result = collection.insert_one(record)
+                if not result.inserted_id:
+                    return jsonify({'message': f'Failed to insert record with Sno {record["Sno"]}'}), 500
         
         return jsonify({'message': 'Data received and saved successfully'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
+
 
 '''**************************************************** Contact us Code ************************************************************************'''
 @app.route('/contact', methods=['POST'])

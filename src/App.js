@@ -62,7 +62,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <header className="w-full flex items-center sm:px-8 px-4 py-4 border-b border-b-[#e6ebf4] bg-gray-300">
+      <header className="w-full flex items-center sm:px-8 px-4 py-4 border-b border-b-[#e6ebf4] bg-gradient-to-r from-orange-400 from-10% via-slate-300 via-30% to-yellow-200 to-90%">
         <h3
           to=""
           className="w-full text-xl font-semibold object-contain font-inter bg-white p-3 shadow-md  text-black px-4 py-2 rounded-md"

@@ -127,6 +127,10 @@ const PatientDashboard = () => {
 
    // Handle form submission for disease prediction
    const handleSubmit = async () => {
+      if (selectedSymptoms.length === 0) {
+         setPredictionError('Please select symptoms before predicting disease.');
+         return;
+      }
       try {
          const response = await fetch(predictRoute, {
             method: 'POST',
@@ -172,7 +176,7 @@ const PatientDashboard = () => {
    }
 
    return (
-      <div className="flex flex-col h-screen p-2 bg-gray-100">
+      <div className="flex flex-col h-screen p-8 bg-gradient-to-r from-slate-300 from-10% via-yellow-100 via-30% to-emerald-200 to-90%">
          {/* Header */}
          <div className="flex flex-col md:flex-row">
             <div className="bg-white rounded-md shadow-md md:w-2/3 p-6 mb-4">
