@@ -6,10 +6,15 @@
 - Signup of patient, admin
 - Logout 
 - Handling input files and redirecting to (admin dashboard or patient dashboard) based on roles
+- Admin Dashboard with powerbi
 - Storing patient,admin credentials and csv data in mongodb database
 - Implementing contact functionality (using mailhog to communicate)
 - Added sypmtoms data set and also disease dataset in mongodb 
 - Adding Machine learning model(decision tree model) and predicting the disease
+## Technologies Used: 
+```bash
+ReactJs, Flask, MongoDb, npm, Scikit-learn
+```
 ## Team members:
 - Sathvik Bandru
 - Ashish Golla
