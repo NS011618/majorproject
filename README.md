@@ -13,7 +13,7 @@
 - Adding Machine learning model(decision tree model) and predicting the disease
 ## Technologies Used: 
 ```bash
-ReactJs, Flask, MongoDb, npm, Scikit-learn
+ReactJs, Flask, MongoDb, npm, Scikit-learn, TailwindCSS
 ```
 
 ### How to run the project
